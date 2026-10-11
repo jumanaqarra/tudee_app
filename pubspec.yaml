@@ -35,7 +35,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+#  المكتبة الأساسية للتخزين
   hive: ^2.2.3
+#  بتخلي Hive يشتغل على الموبايل (بتحدد مكان التخزين)
   hive_flutter: ^1.1.0
 
 dev_dependencies:
@@ -76,10 +78,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+  - family: CustomFontName
+    fonts:
+         - asset: fonts/CherryBombOne-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

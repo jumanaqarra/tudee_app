@@ -18,16 +18,16 @@ class TudeeApp extends StatefulWidget {
 }
 
 class _TudeeAppState extends State<TudeeApp> {
-  late final Future<bool> _initFuture;
+  late final Future<bool> initFuture;
 
   @override
   void initState() {
     super.initState();
-    _initFuture = _initHive();
+    initFuture = initHive();
   }
 
   /// Opens Hive and returns true if the user already saved a name.
-  Future<bool> _initHive() async {
+  Future<bool> initHive() async {
     await Hive.initFlutter();
     if (!Hive.isAdapterRegistered(0)) {
       Hive.registerAdapter(TaskModelAdapter());
@@ -50,7 +50,7 @@ class _TudeeAppState extends State<TudeeApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
       ),
       home: FutureBuilder<bool>(
-        future: _initFuture,
+        future: initFuture,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
