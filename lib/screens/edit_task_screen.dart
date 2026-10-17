@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../models/task_model.dart';
+import '../services/firestore_service.dart';
 import '../theme/app_theme.dart';
 
 class EditTaskScreen extends StatefulWidget {
@@ -32,18 +35,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   Future<void> _saveChanges() async {
     final title = _titleController.text.trim();
     if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Task title cannot be empty')),
-      );
+      Get.snackbar('Oops', 'Task title cannot be empty');
       return;
     }
 
-    widget.task.title = title;
-    widget.task.isDone = _isDone;
-    await widget.task.save(); // TaskModel extends HiveObject
-
-    if (!mounted) return;
-    Navigator.of(context).pop();
+    await FirestoreService.updateTask(widget.task.id, title, _isDone);
+    Get.back();
   }
 
   @override
@@ -55,7 +52,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
+            const Gap(16),
             const Text(
               'Edit Task',
               style: TextStyle(
@@ -64,14 +61,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 color: AppColors.textDark,
               ),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             TudeeTextField(
               controller: _titleController,
               hint: 'What needs to be done?',
               minLines: 3,
               maxLines: 5,
             ),
-            const SizedBox(height: 16),
+            const Gap(16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -82,7 +79,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   selected: !_isDone,
                   onTap: () => setState(() => _isDone = false),
                 ),
-                const SizedBox(width: 16),
+                const Gap(16),
                 _StatusChip(
                   label: 'Done',
                   icon: Icons.task_alt,
@@ -92,7 +89,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const Gap(16),
             PrimaryButton(label: 'Save changes', onPressed: _saveChanges),
           ],
         ),
@@ -129,16 +126,14 @@ class _StatusChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(10),
-            border: selected
-                ? Border.all(color: Colors.white, width: 2)
-                : null,
+            border: selected ? Border.all(color: Colors.white, width: 2) : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (selected) ...[
                 Icon(icon, color: Colors.white, size: 16),
-                const SizedBox(width: 4),
+                const Gap(4),
               ],
               Text(
                 label,
