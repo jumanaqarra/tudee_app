@@ -30,8 +30,37 @@ class _TudeeAppState extends State<TudeeApp> {
 
   /// Starts Firebase, then returns the saved name (or null if none).
   Future<String?> init() async {
+    WidgetsFlutterBinding.ensureInitialized(); // اولا : بجهز الفلاتر
+
+    // WidgetsFlutterBinding: المسؤول عن ربط إطار عمل Flutter بالمنصة التي يعمل عليها التطبيق، وتنظيم التواصل مع أجزاء النظام.
+    // ensureInitialized(): تتأكد من أن هذا الربط قد جرى تهيئته قبل استخدامه.
+
     await Firebase.initializeApp(
+// ثانيا : بهيئ الفايربيز لاستخدام خدماته لاحقا وتنتظر اكتمال العملية
+      // ما وظيفة await في هذا الكود؟
+      // تنتظر اكتمال تهيئة Firebase قبل متابعة التنفيذ.
+      // Firebase.initializeApp()؟
+      // Firebase هي المكتبة التي تتيح لتطبيقك استخدام خدمات Firebase.
+      // initializeApp()
+      // فهي دالة تهيّئ تطبيق Firebase وتُنشئ نسخة جاهزة للاستخدام داخل مشروع Flutter.
+
       options: DefaultFirebaseOptions.currentPlatform,
+      // options هنا اسم مُعامل في الدالة، نمرّر من خلاله إعدادات Firebase المطلوبة للمشروع
+      /*options هنا اسم مُعامل في الدالة، نمرّر من خلاله إعدادات Firebase المطلوبة للمشروع.
+  مثلًا، هذه الإعدادات قد تتضمن معلومات مثل:
+  - معرّف مشروع Firebase.
+  - مفتاح API الخاص بالمشروع.
+  - معرّف التطبيق على المنصة.
+  - معلومات أخرى تختلف بحسب المنصة والإعدادات.
+  هذه المعلومات تُستخدم لتحديد مشروع Firebase الذي يتصل به التطبيق.*/
+
+      // // DefaultFirebaseOptions
+      // كلاس يحتوي على إعدادات Firebase التي جرى توليدها للمنصات المدعومة.
+
+      //   currentPlatform
+      /*تحدد إعدادات المنصة الحالية التي يعمل عليها التطبيق، مثل Android أو iOS، وفق المنصات التي أُعدّ المشروع لدعمها.
+مثلًا، بما أنك تشغّلين تطبيق Flutter على هاتف Android، سيُستخدم إعداد Firebase الخاص بـ Android.
+*/
     );
     final name = await FirestoreService.getName();
     if (name == null || name.trim().isEmpty) return null;
