@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
-import '../models/task_model.dart';
+import '../services/firestore_service.dart';
 import '../theme/app_theme.dart';
 
 class AddTaskScreen extends StatefulWidget {
@@ -23,15 +24,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Future<void> _saveTask() async {
     final title = _titleController.text.trim();
     if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please describe your task')),
-      );
+      Get.snackbar('Oops', 'Please describe your task');
       return;
     }
 
-    await Hive.box<TaskModel>('tasks').add(TaskModel(title: title));
-    if (!mounted) return;
-    Navigator.of(context).pop();
+    await FirestoreService.addTask(title);
+    Get.back();
   }
 
   @override
@@ -43,7 +41,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
+            const Gap(16),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -58,14 +56,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 Icon(Icons.note_add_outlined, color: AppColors.textDark),
               ],
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             TudeeTextField(
               controller: _titleController,
               hint: 'What needs to be done?',
               minLines: 2,
               maxLines: 4,
             ),
-            const SizedBox(height: 16),
+            const Gap(16),
             PrimaryButton(label: 'Save', onPressed: _saveTask),
           ],
         ),

@@ -23,6 +23,7 @@ AppBar tudeeAppBar() {
       'Tudee',
       style: TextStyle(
         color: Colors.white,
+        fontFamily: 'CustomFontName',
         fontSize: 20,
         fontWeight: FontWeight.w900,
         letterSpacing: 0.5,

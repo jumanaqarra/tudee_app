@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:get/get.dart';
 
-import 'models/task_model.dart';
+import 'firebase_options.dart';
 import 'screens/home_screen.dart';
 import 'screens/welcome_screen.dart';
+import 'services/firestore_service.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -18,30 +20,27 @@ class TudeeApp extends StatefulWidget {
 }
 
 class _TudeeAppState extends State<TudeeApp> {
-  late final Future<bool> _initFuture;
+  late final Future<String?> initFuture;
 
   @override
   void initState() {
     super.initState();
-    _initFuture = _initHive();
+    initFuture = init();
   }
 
-  /// Opens Hive and returns true if the user already saved a name.
-  Future<bool> _initHive() async {
-    await Hive.initFlutter();
-    if (!Hive.isAdapterRegistered(0)) {
-      Hive.registerAdapter(TaskModelAdapter());
-    }
-    await Hive.openBox('settings');
-    await Hive.openBox<TaskModel>('tasks');
-
-    final name = Hive.box('settings').get('name') as String?;
-    return name != null && name.trim().isNotEmpty;
+  /// Starts Firebase, then returns the saved name (or null if none).
+  Future<String?> init() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    final name = await FirestoreService.getName();
+    if (name == null || name.trim().isEmpty) return null;
+    return name;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Tudee',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -49,22 +48,21 @@ class _TudeeAppState extends State<TudeeApp> {
         scaffoldBackgroundColor: AppColors.background,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
       ),
-      home: FutureBuilder<bool>(
-        future: _initFuture,
+      home: FutureBuilder<String?>(
+        future: initFuture,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
               body: Center(child: Text('Error: ${snapshot.error}')),
             );
           }
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState != ConnectionState.done) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          return snapshot.data!
-              ? const HomeScreen()
-              : const WelcomeScreen();
+          final name = snapshot.data;
+          return name == null ? const WelcomeScreen() : HomeScreen(name: name);
         },
       ),
     );
