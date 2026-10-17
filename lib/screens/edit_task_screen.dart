@@ -16,30 +16,30 @@ class EditTaskScreen extends StatefulWidget {
 }
 
 class _EditTaskScreenState extends State<EditTaskScreen> {
-  late final TextEditingController _titleController;
-  late bool _isDone;
+  late final TextEditingController titleController;
+  late bool isDone;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.task.title);
-    _isDone = widget.task.isDone;
+    titleController = TextEditingController(text: widget.task.title);
+    isDone = widget.task.isDone;
   }
 
   @override
   void dispose() {
-    _titleController.dispose();
+    titleController.dispose();
     super.dispose();
   }
 
-  Future<void> _saveChanges() async {
-    final title = _titleController.text.trim();
+  Future<void> saveChanges() async {
+    final title = titleController.text.trim();
     if (title.isEmpty) {
       Get.snackbar('Oops', 'Task title cannot be empty');
       return;
     }
 
-    await FirestoreService.updateTask(widget.task.id, title, _isDone);
+    await FirestoreService.updateTask(widget.task.id, title, isDone);
     Get.back();
   }
 
@@ -63,7 +63,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
             ),
             const Gap(24),
             TudeeTextField(
-              controller: _titleController,
+              controller: titleController,
               hint: 'What needs to be done?',
               minLines: 3,
               maxLines: 5,
@@ -72,25 +72,25 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _StatusChip(
-                  label: 'To Do',
-                  icon: Icons.sticky_note_2_outlined,
-                  color: AppColors.todo,
-                  selected: !_isDone,
-                  onTap: () => setState(() => _isDone = false),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDone ? Colors.grey : AppColors.todo,
+                  ),
+                  onPressed: () => setState(() => isDone = false),
+                  child: const Text('To Do', style: TextStyle(color: Colors.white)),
                 ),
                 const Gap(16),
-                _StatusChip(
-                  label: 'Done',
-                  icon: Icons.task_alt,
-                  color: AppColors.done,
-                  selected: _isDone,
-                  onTap: () => setState(() => _isDone = true),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDone ? AppColors.done : Colors.grey,
+                  ),
+                  onPressed: () => setState(() => isDone = true),
+                  child: const Text('Done', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
             const Gap(16),
-            PrimaryButton(label: 'Save changes', onPressed: _saveChanges),
+            PrimaryButton(label: 'Save changes', onPressed: saveChanges),
           ],
         ),
       ),

@@ -3,13 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task_model.dart';
 
 class FirestoreService {
-  static final _db = FirebaseFirestore.instance;
+  static final dataBase = FirebaseFirestore.instance;
 
   // مجموعة المهام
-  static final tasks = _db.collection('tasks');
+  static final tasks = dataBase.collection('tasks');
 
   // مستند واحد بنخزن فيه اسم المستخدم
-  static final profile = _db.collection('settings').doc('profile');
+  static final profile = dataBase.collection('settings').doc('profile');
 
   // ---------- الاسم ----------
 

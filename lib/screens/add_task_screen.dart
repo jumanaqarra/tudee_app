@@ -13,16 +13,16 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  final _titleController = TextEditingController();
+  final titleController = TextEditingController();
 
   @override
   void dispose() {
-    _titleController.dispose();
+    titleController.dispose();
     super.dispose();
   }
 
-  Future<void> _saveTask() async {
-    final title = _titleController.text.trim();
+  Future<void> saveTask() async {
+    final title = titleController.text.trim();
     if (title.isEmpty) {
       Get.snackbar('Oops', 'Please describe your task');
       return;
@@ -58,13 +58,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             ),
             const Gap(24),
             TudeeTextField(
-              controller: _titleController,
+              controller: titleController,
               hint: 'What needs to be done?',
               minLines: 2,
               maxLines: 4,
             ),
             const Gap(16),
-            PrimaryButton(label: 'Save', onPressed: _saveTask),
+            PrimaryButton(label: 'Save', onPressed: saveTask),
           ],
         ),
       ),
